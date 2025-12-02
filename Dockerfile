@@ -40,12 +40,23 @@ RUN chown -R www-data:www-data /var/www/html \
     && find storage bootstrap/cache -type d -exec chmod 775 {} \; \
     && find storage bootstrap/cache -type f -exec chmod 664 {} \;
 
+# Environment for Composer
+ENV COMPOSER_ALLOW_SUPERUSER=1 \
+    COMPOSER_PROCESS_TIMEOUT=600
+
+# Optionally pass a GitHub token at build time to avoid API rate limits
+ARG GITHUB_TOKEN
+RUN if [ -n "$GITHUB_TOKEN" ]; then \
+      composer config -g --auth github-oauth.github.com "$GITHUB_TOKEN"; \
+    fi
+
 # Install PHP dependencies (no scripts to avoid artisan calls during build)
 RUN composer install \
-      --no-dev \
-      --optimize-autoloader \
-      --no-interaction \
-      --no-scripts
+    --no-dev \
+    --prefer-dist \
+    --optimize-autoloader \
+    --no-interaction \
+    --no-scripts
 
 # Expose Apache port
 EXPOSE 80
