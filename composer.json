@@ -9,6 +9,8 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "ext-bcmath": "*",
+        "ext-zip": "*",
         "box/spout": "3.3.0",
         "dompdf/dompdf": "3.1.0",
         "endroid/qr-code": "^5.0",
